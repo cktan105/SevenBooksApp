@@ -1,16 +1,20 @@
 package com.sa45team7.sevenbooksapp;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sa45team7.sevenbooksapp.dummy.DummyContent;
+import com.sa45team7.sevenbooksapp.dao.BookDAO;
 import com.sa45team7.sevenbooksapp.model.Book;
+import com.sa45team7.sevenbooksapp.util.HttpHandler;
 
 /**
  * A fragment representing a single Book detail screen.
@@ -25,10 +29,14 @@ public class BookDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM_ID = "item_id";
 
+    private static final String ROOT_URL = "http://10.211.55.5/something/image/";
+
     /**
      * The dummy content this fragment is presenting.
      */
     private Book mBook;
+
+    private View rootView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -45,7 +53,7 @@ public class BookDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mBook = DummyContent.BOOK_MAP.get(getArguments().getInt(ARG_ITEM_ID));
+            mBook = BookDAO.getInstance().getBooksMap().get(getArguments().getInt(ARG_ITEM_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -58,7 +66,7 @@ public class BookDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.book_detail, container, false);
+        rootView = inflater.inflate(R.layout.book_detail, container, false);
 
         if (mBook != null) {
             ((TextView) rootView.findViewById(R.id.title)).setText(mBook.getTitle());
@@ -78,6 +86,24 @@ public class BookDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.price)).setText(price);
         }
 
+        new GetBookImage().execute();
+
         return rootView;
+    }
+
+    private class GetBookImage extends AsyncTask<Void, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            String url = ROOT_URL + mBook.getIsbn() + ".jpg";
+            Bitmap bitmap = HttpHandler.getImageFromServer(url);
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            ((ImageView) rootView.findViewById(R.id.book_image)).setImageBitmap(bitmap);
+        }
+
     }
 }

@@ -12,7 +12,7 @@ public class Book {
     private String isbn;
     private String category;
     private int stock;
-    private long price;
+    private double price;
 
     public Book(int id, String title, String author, String isbn, String category, int stock, long price) {
         this.id = id;
@@ -72,11 +72,11 @@ public class Book {
         this.stock = stock;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }

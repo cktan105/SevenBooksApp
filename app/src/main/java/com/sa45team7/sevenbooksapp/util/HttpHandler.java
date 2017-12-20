@@ -1,5 +1,7 @@
 package com.sa45team7.sevenbooksapp.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -21,9 +23,7 @@ public class HttpHandler {
 
     private static final String TAG = HttpHandler.class.getSimpleName();
 
-    private Date date = new Date();
-
-    public static String makeServiceCall(String reqUrl) {
+    public static String getJsonFromServer(String reqUrl) {
 
         String response = null;
         HttpURLConnection conn = null;
@@ -49,6 +49,33 @@ public class HttpHandler {
         }
 
         return response;
+    }
+
+    public static Bitmap getImageFromServer(String reqUrl) {
+        Bitmap bitmap = null;
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(reqUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            // read the response
+            InputStream inputStream = new BufferedInputStream(conn.getInputStream());
+            bitmap = BitmapFactory.decodeStream(inputStream);
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "MalformedURLException: " + e.getMessage());
+        } catch (ProtocolException e) {
+            Log.e(TAG, "ProtocolException: " + e.getMessage());
+        } catch (IOException e) {
+            Log.e(TAG, "IOException: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "Exception: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        return bitmap;
     }
 
     private static String convertStreamToString(InputStream inputStream) {

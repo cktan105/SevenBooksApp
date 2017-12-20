@@ -6,8 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import com.sa45team7.sevenbooksapp.dummy.DummyContent;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.sa45team7.sevenbooksapp.dao.BookDAO;
 import com.sa45team7.sevenbooksapp.model.Book;
+import com.sa45team7.sevenbooksapp.util.HttpHandler;
 
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class BookListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
 
-    private static final String ROOT_URL = "172.17.253.95/BookShopWCFService";
+    private static final String ROOT_URL = "http://10.211.55.5/something/AndroidService.svc/Books";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,21 +51,21 @@ public class BookListActivity extends AppCompatActivity {
         new GetBooksList().execute();
     }
 
-    private class GetBooksList extends AsyncTask<Void, Void, List<Book>> {
+    private class GetBooksList extends AsyncTask<Void, Void, String> {
 
         @Override
-        protected List<Book> doInBackground(Void... voids) {
-//            String json = HttpHandler.makeServiceCall("");
-//            Gson gson = new Gson();
-//            List<Book> books = gson.fromJson(json, new TypeToken<List<Book>>() {
-//            }.getType());
-//            return books;
-            return DummyContent.BOOKS;
+        protected String doInBackground(Void... voids) {
+            String json = HttpHandler.getJsonFromServer(ROOT_URL);
+
+            return json;
         }
 
         @Override
-        protected void onPostExecute(List<Book> books) {
-            super.onPostExecute(books);
+        protected void onPostExecute(String json) {
+            Gson gson = new Gson();
+            List<Book> books = gson.fromJson(json, new TypeToken<List<Book>>() {
+            }.getType());
+            BookDAO.getInstance().setBooksMap(books);
             RecyclerView recyclerView = findViewById(R.id.book_list);
             recyclerView.setAdapter(new BookAdapter(BookListActivity.this, books, mTwoPane));
         }

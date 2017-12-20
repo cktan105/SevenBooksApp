@@ -1,11 +1,9 @@
 package com.sa45team7.sevenbooksapp.dao;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sa45team7.sevenbooksapp.dummy.DummyContent;
 import com.sa45team7.sevenbooksapp.model.Book;
-import com.sa45team7.sevenbooksapp.util.HttpHandler;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,6 +14,7 @@ public class BookDAO {
 
     private static final String ROOT_URL = "";
     private static BookDAO instance;
+    private HashMap<Integer, Book> booksMap = new HashMap<>();
 
     private BookDAO() {
 
@@ -29,12 +28,17 @@ public class BookDAO {
     }
 
     public List<Book> getAllBooks() {
-//        String json = HttpHandler.makeServiceCall(ROOT_URL + "Books");
-//        Gson gson = new Gson();
-//        List<Book> books = gson.fromJson(json, new TypeToken<List<Book>>(){}.getType());
-//        return books;
         return DummyContent.BOOKS;
     }
 
+    public void setBooksMap(List<Book> books) {
+        for (Book book : books) {
+            booksMap.put(book.getId(), book);
+        }
+    }
+
+    public HashMap<Integer, Book> getBooksMap() {
+        return booksMap;
+    }
 
 }
