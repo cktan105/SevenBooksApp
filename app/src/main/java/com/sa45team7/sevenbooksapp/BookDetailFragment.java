@@ -1,8 +1,8 @@
 package com.sa45team7.sevenbooksapp;
 
 import android.app.Activity;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sa45team7.sevenbooksapp.dummy.DummyContent;
+import com.sa45team7.sevenbooksapp.model.Book;
 
 /**
  * A fragment representing a single Book detail screen.
@@ -27,7 +28,7 @@ public class BookDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private Book mBook;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,12 +45,12 @@ public class BookDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mBook = DummyContent.BOOK_MAP.get(getArguments().getInt(ARG_ITEM_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mBook.getTitle());
             }
         }
     }
@@ -59,9 +60,22 @@ public class BookDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.book_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.book_detail)).setText(mItem.details);
+        if (mBook != null) {
+            ((TextView) rootView.findViewById(R.id.title)).setText(mBook.getTitle());
+
+            String author = "Written by " + mBook.getAuthor();
+            ((TextView) rootView.findViewById(R.id.author)).setText(author);
+
+//            ((TextView) rootView.findViewById(R.id.isbn)).setText(mBook.getIsbn());
+
+            String category = "Category: " + mBook.getCategory();
+            ((TextView) rootView.findViewById(R.id.category)).setText(category);
+
+            String stock = "Stock: " + String.valueOf(mBook.getStock());
+            ((TextView) rootView.findViewById(R.id.stock)).setText(stock);
+
+            String price = "S$ " + String.valueOf(mBook.getPrice());
+            ((TextView) rootView.findViewById(R.id.price)).setText(price);
         }
 
         return rootView;
