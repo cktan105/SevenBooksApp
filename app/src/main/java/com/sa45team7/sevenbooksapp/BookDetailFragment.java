@@ -16,6 +16,8 @@ import com.sa45team7.sevenbooksapp.dao.BookDAO;
 import com.sa45team7.sevenbooksapp.model.Book;
 import com.sa45team7.sevenbooksapp.util.HttpHandler;
 
+import java.lang.ref.WeakReference;
+
 /**
  * A fragment representing a single Book detail screen.
  * This fragment is either contained in a {@link BookListActivity}
@@ -35,8 +37,6 @@ public class BookDetailFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     private Book mBook;
-
-    private View rootView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -66,7 +66,7 @@ public class BookDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.book_detail, container, false);
+        View rootView = inflater.inflate(R.layout.book_detail, container, false);
 
         if (mBook != null) {
             ((TextView) rootView.findViewById(R.id.title)).setText(mBook.getTitle());
@@ -84,25 +84,32 @@ public class BookDetailFragment extends Fragment {
 
             String price = "S$ " + String.valueOf(mBook.getPrice());
             ((TextView) rootView.findViewById(R.id.price)).setText(price);
-        }
 
-        new GetBookImage().execute();
+            String url = ROOT_URL + mBook.getIsbn() + ".jpg";
+            new GetBookImage(rootView).execute(url);
+        }
 
         return rootView;
     }
 
-    private class GetBookImage extends AsyncTask<Void, Void, Bitmap> {
+    static private class GetBookImage extends AsyncTask<String, Void, Bitmap> {
+
+        WeakReference<View> rootView;
+
+        GetBookImage(View rootView) {
+            this.rootView = new WeakReference<>(rootView);
+        }
 
         @Override
-        protected Bitmap doInBackground(Void... voids) {
-            String url = ROOT_URL + mBook.getIsbn() + ".jpg";
-            Bitmap bitmap = HttpHandler.getImageFromServer(url);
-            return bitmap;
+        protected Bitmap doInBackground(String... strings) {
+            String url = strings[0];
+            return HttpHandler.getImageFromServer(url);
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            ((ImageView) rootView.findViewById(R.id.book_image)).setImageBitmap(bitmap);
+            View view = rootView.get();
+            ((ImageView) view.findViewById(R.id.book_image)).setImageBitmap(bitmap);
         }
 
     }

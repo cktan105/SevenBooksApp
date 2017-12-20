@@ -12,6 +12,7 @@ import com.sa45team7.sevenbooksapp.dao.BookDAO;
 import com.sa45team7.sevenbooksapp.model.Book;
 import com.sa45team7.sevenbooksapp.util.HttpHandler;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class BookListActivity extends AppCompatActivity {
     private boolean mTwoPane;
 
     private static final String ROOT_URL = "http://10.211.55.5/something/AndroidService.svc/Books";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,17 +49,25 @@ public class BookListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-
-        new GetBooksList().execute();
+        RecyclerView recyclerView = findViewById(R.id.book_list);
+        new GetBooksList(this, recyclerView, mTwoPane).execute();
     }
 
-    private class GetBooksList extends AsyncTask<Void, Void, String> {
+    static private class GetBooksList extends AsyncTask<Void, Void, String> {
+
+        WeakReference<RecyclerView> recyclerViewWeakReference;
+        boolean twoPane;
+        WeakReference<BookListActivity> activityWeakReference;
+
+        GetBooksList(BookListActivity activity, RecyclerView recyclerView, boolean twoPane) {
+            this.activityWeakReference = new WeakReference<BookListActivity>(activity);
+            this.recyclerViewWeakReference = new WeakReference<RecyclerView>(recyclerView);
+            this.twoPane = twoPane;
+        }
 
         @Override
         protected String doInBackground(Void... voids) {
-            String json = HttpHandler.getJsonFromServer(ROOT_URL);
-
-            return json;
+            return HttpHandler.getJsonFromServer(ROOT_URL);
         }
 
         @Override
@@ -66,8 +76,8 @@ public class BookListActivity extends AppCompatActivity {
             List<Book> books = gson.fromJson(json, new TypeToken<List<Book>>() {
             }.getType());
             BookDAO.getInstance().setBooksMap(books);
-            RecyclerView recyclerView = findViewById(R.id.book_list);
-            recyclerView.setAdapter(new BookAdapter(BookListActivity.this, books, mTwoPane));
+            RecyclerView recyclerView = recyclerViewWeakReference.get();
+            recyclerView.setAdapter(new BookAdapter(activityWeakReference.get(), books, twoPane));
         }
 
     }

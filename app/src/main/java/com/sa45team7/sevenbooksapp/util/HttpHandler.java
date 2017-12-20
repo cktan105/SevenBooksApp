@@ -13,7 +13,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Date;
 
 /**
  * Created by nhatton on 8/12/17.

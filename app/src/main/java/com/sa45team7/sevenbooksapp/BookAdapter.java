@@ -43,9 +43,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         }
     };
 
-    public BookAdapter(BookListActivity parent,
-                       List<Book> items,
-                       boolean twoPane) {
+    public BookAdapter(BookListActivity parent, List<Book> items, boolean twoPane) {
         mValues = items;
         mParentActivity = parent;
         mTwoPane = twoPane;
