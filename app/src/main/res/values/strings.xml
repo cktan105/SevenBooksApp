@@ -2,6 +2,6 @@
     <string name="app_name">Seven Books App</string>
     <string name="title_book_detail">Book Detail</string>
     <string name="search">Search</string>
-    <string name="search_hint">Enter title here</string>
+    <string name="search_hint">Enter book title here</string>
     <string name="all_action">All</string>
 </resources>

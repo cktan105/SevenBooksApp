@@ -37,6 +37,7 @@ public class BookListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private Toolbar toolbar;
     private RecyclerView recyclerView;
 
     private static final String ROOT_URL = "http://10.211.55.5/something/AndroidService.svc/Books";
@@ -46,7 +47,7 @@ public class BookListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
@@ -69,7 +70,7 @@ public class BookListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         assert searchManager != null;
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
@@ -78,7 +79,7 @@ public class BookListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_all){
+        if (item.getItemId() == R.id.action_all) {
             new GetBooksList(this, recyclerView, mTwoPane).execute();
         }
         return super.onOptionsItemSelected(item);
@@ -114,8 +115,8 @@ public class BookListActivity extends AppCompatActivity {
         boolean twoPane;
 
         GetBooksList(BookListActivity activity, RecyclerView recyclerView, boolean twoPane) {
-            this.activityWeakReference = new WeakReference<BookListActivity>(activity);
-            this.recyclerViewWeakReference = new WeakReference<RecyclerView>(recyclerView);
+            this.activityWeakReference = new WeakReference<>(activity);
+            this.recyclerViewWeakReference = new WeakReference<>(recyclerView);
             this.twoPane = twoPane;
         }
 
