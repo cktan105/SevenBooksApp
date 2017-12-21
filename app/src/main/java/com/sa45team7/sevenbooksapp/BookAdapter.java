@@ -3,6 +3,7 @@ package com.sa45team7.sevenbooksapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                 fragment.setArguments(arguments);
                 mParentActivity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.book_detail_container, fragment)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .commit();
             } else {
                 Context context = view.getContext();

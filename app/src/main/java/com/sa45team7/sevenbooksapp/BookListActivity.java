@@ -56,8 +56,8 @@ public class BookListActivity extends AppCompatActivity {
     static private class GetBooksList extends AsyncTask<Void, Void, String> {
 
         WeakReference<RecyclerView> recyclerViewWeakReference;
-        boolean twoPane;
         WeakReference<BookListActivity> activityWeakReference;
+        boolean twoPane;
 
         GetBooksList(BookListActivity activity, RecyclerView recyclerView, boolean twoPane) {
             this.activityWeakReference = new WeakReference<BookListActivity>(activity);
@@ -76,8 +76,13 @@ public class BookListActivity extends AppCompatActivity {
             List<Book> books = gson.fromJson(json, new TypeToken<List<Book>>() {
             }.getType());
             BookDAO.getInstance().setBooksMap(books);
-            RecyclerView recyclerView = recyclerViewWeakReference.get();
-            recyclerView.setAdapter(new BookAdapter(activityWeakReference.get(), books, twoPane));
+            if (recyclerViewWeakReference != null) {
+                RecyclerView recyclerView = recyclerViewWeakReference.get();
+                if (recyclerView != null) {
+                    recyclerView.setAdapter(new BookAdapter(activityWeakReference.get(), books, twoPane));
+                }
+            }
+
         }
 
     }

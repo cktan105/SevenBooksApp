@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#e0ffffff"
     tools:context="com.sa45team7.sevenbooksapp.BookDetailFragment">
 
     <TextView
         android:id="@+id/title"
         style="@style/TextAppearance.AppCompat.Headline"
-        android:layout_width="134dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginTop="16dp"
@@ -30,11 +31,13 @@
     <TextView
         android:id="@+id/author"
         style="@style/TextAppearance.AppCompat.Body2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="12dp"
         android:textIsSelectable="true"
+        app:layout_constraintEnd_toStartOf="@+id/book_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 

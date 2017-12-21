@@ -108,8 +108,12 @@ public class BookDetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            View view = rootView.get();
-            ((ImageView) view.findViewById(R.id.book_image)).setImageBitmap(bitmap);
+            if (rootView != null) {
+                View view = rootView.get();
+                if (view != null) {
+                    ((ImageView) view.findViewById(R.id.book_image)).setImageBitmap(bitmap);
+                }
+            }
         }
 
     }

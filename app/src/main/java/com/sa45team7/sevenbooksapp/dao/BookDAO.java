@@ -1,6 +1,5 @@
 package com.sa45team7.sevenbooksapp.dao;
 
-import com.sa45team7.sevenbooksapp.dummy.DummyContent;
 import com.sa45team7.sevenbooksapp.model.Book;
 
 import java.util.HashMap;
@@ -25,10 +24,6 @@ public class BookDAO {
             instance = new BookDAO();
         }
         return instance;
-    }
-
-    public List<Book> getAllBooks() {
-        return DummyContent.BOOKS;
     }
 
     public void setBooksMap(List<Book> books) {
