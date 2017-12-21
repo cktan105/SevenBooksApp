@@ -74,8 +74,6 @@ public class BookDetailFragment extends Fragment {
             String author = "Written by " + mBook.getAuthor();
             ((TextView) rootView.findViewById(R.id.author)).setText(author);
 
-//            ((TextView) rootView.findViewById(R.id.isbn)).setText(mBook.getIsbn());
-
             String category = "Category: " + mBook.getCategory();
             ((TextView) rootView.findViewById(R.id.category)).setText(category);
 
@@ -85,8 +83,9 @@ public class BookDetailFragment extends Fragment {
             String price = "S$ " + String.valueOf(mBook.getPrice());
             ((TextView) rootView.findViewById(R.id.price)).setText(price);
 
+            ImageView imageView = rootView.findViewById(R.id.book_image);
             String url = ROOT_URL + mBook.getIsbn() + ".jpg";
-            new GetBookImage(rootView).execute(url);
+            new GetBookImage(imageView).execute(url);
         }
 
         return rootView;
@@ -94,10 +93,10 @@ public class BookDetailFragment extends Fragment {
 
     static private class GetBookImage extends AsyncTask<String, Void, Bitmap> {
 
-        WeakReference<View> rootView;
+        WeakReference<ImageView> imageView;
 
-        GetBookImage(View rootView) {
-            this.rootView = new WeakReference<>(rootView);
+        GetBookImage(ImageView imageView) {
+            this.imageView = new WeakReference<>(imageView);
         }
 
         @Override
@@ -108,10 +107,10 @@ public class BookDetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (rootView != null) {
-                View view = rootView.get();
+            if (imageView != null) {
+                ImageView view = imageView.get();
                 if (view != null) {
-                    ((ImageView) view.findViewById(R.id.book_image)).setImageBitmap(bitmap);
+                    view.setImageBitmap(bitmap);
                 }
             }
         }

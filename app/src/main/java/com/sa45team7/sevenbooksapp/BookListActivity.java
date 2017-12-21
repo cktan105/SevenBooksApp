@@ -1,10 +1,16 @@
 package com.sa45team7.sevenbooksapp;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -13,6 +19,7 @@ import com.sa45team7.sevenbooksapp.model.Book;
 import com.sa45team7.sevenbooksapp.util.HttpHandler;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +37,7 @@ public class BookListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private RecyclerView recyclerView;
 
     private static final String ROOT_URL = "http://10.211.55.5/something/AndroidService.svc/Books";
 
@@ -49,8 +57,54 @@ public class BookListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-        RecyclerView recyclerView = findViewById(R.id.book_list);
-        new GetBooksList(this, recyclerView, mTwoPane).execute();
+        recyclerView = findViewById(R.id.book_list);
+
+        if (!handleIntent(getIntent())) {
+            new GetBooksList(this, recyclerView, mTwoPane).execute();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        assert searchManager != null;
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_all){
+            new GetBooksList(this, recyclerView, mTwoPane).execute();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private boolean handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY).toLowerCase();
+
+            List<Book> result = new ArrayList<>();
+            for (Book book : BookDAO.getInstance().getBooksMap().values()) {
+                if (book.getTitle().toLowerCase().contains(query)) {
+                    result.add(book);
+                }
+            }
+            recyclerView.setAdapter(new BookAdapter(this, result, mTwoPane));
+
+            return true;
+        }
+        return false;
     }
 
     static private class GetBooksList extends AsyncTask<Void, Void, String> {
@@ -82,7 +136,6 @@ public class BookListActivity extends AppCompatActivity {
                     recyclerView.setAdapter(new BookAdapter(activityWeakReference.get(), books, twoPane));
                 }
             }
-
         }
 
     }
